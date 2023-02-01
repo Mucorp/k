@@ -299,7 +299,11 @@ const configurtionChildrens = [
 //                 <>
 //                   <CheckBox
 //                     checked={data.all}
-//                     onChange={(e: any) => field.onChange(e.target.checked)}
+//                     onChange={(e: any) => {
+// field.onChange(e.target.checked);
+// handleChange(e)
+//                           }
+//                           }
 //                     id={`read-${data?.attributeName}`}
 //                     fieldRef={field.ref}
 //                   />
@@ -321,7 +325,11 @@ const configurtionChildrens = [
 //               <>
 //                 <CheckBox
 //                   checked={data?.read}
-//                   onChange={(e: any) => field.onChange(e.target.checked)}
+//                   onChange={(e: any) => {
+// field.onChange(e.target.checked);
+// handleChange(e)
+//                           }
+//                           }
 //                   id={`read-${data?.attributeName}`}
 //                   fieldRef={field.ref}
 //                 />
@@ -340,7 +348,11 @@ const configurtionChildrens = [
 //               <>
 //                 <CheckBox
 //                   checked={data.addUpdate}
-//                   onChange={(e: any) => field.onChange(e.target.checked)}
+//                   onChange={(e: any) => {
+// field.onChange(e.target.checked);
+// handleChange(e)
+//                           }
+//                           }
 //                   id={`read-${data?.attributeName}`}
 //                   fieldRef={field.ref}
 //                 />
@@ -359,7 +371,11 @@ const configurtionChildrens = [
 //               <>
 //                 <CheckBox
 //                   checked={data?.delete}
-//                   onChange={(e: any) => field.onChange(e.target.checked)}
+//                   onChange={(e: any) => {
+// field.onChange(e.target.checked);
+// handleChange(e)
+//                           }
+//                           }
 //                   id={`read-${data?.attributeName}`}
 //                   fieldRef={field.ref}
 //                 />
@@ -498,11 +514,28 @@ export default function RoleDetails(props) {
     console.log(parsedData);
   }, [parsedData]);
 
-  React.useEffect(() => {
+  // React.useEffect(() => {
+  //   console.log(`formState===>`, watch());
+  //   const values = watch();
+
+  //   if (values[`all-configuration`]) {
+  //     const temp = {};
+
+  //     for (const key of configurtionChildrens) {
+  //       temp[key] = true;
+  //     }
+
+  //     reset(temp);
+  //   }
+  // }, [watch()]);
+
+  const handleChange = (e) => {
+
+    console.log('eeee===>', e)
     console.log(`formState===>`, watch());
     const values = watch();
 
-    if (values[`all-configuration`]) {
+    if (e?.target?.id === `all-configuration` && e.target.checked) {
       const temp = {};
 
       for (const key of configurtionChildrens) {
@@ -511,7 +544,59 @@ export default function RoleDetails(props) {
 
       reset(temp);
     }
-  }, [watch()]);
+    if (e?.target?.id === `all-configuration` && !e.target.checked) {
+
+      const temp = {};
+
+      for (const key of configurtionChildrens) {
+        temp[key] = false;
+      }
+
+      reset(temp);
+    }
+    if (e?.target?.id !== `all-configuration` && !e?.target?.id.includes('configuration')) {
+      // debugger
+      let temp = cloneDeep(values)
+      for (const key of configurtionChildrens) {
+        console.log('key===>', key.split('all-')[1])
+        if (key === e?.target?.id && e?.target?.id?.includes('all')) {
+          temp[`read-${key.split('all-')[1]}`] = e.target.checked
+          temp[`delete-${key.split('all-')[1]}`] = e.target.checked
+          temp[`update-${key.split('all-')[1]}`] = e.target.checked
+          temp[key] = e.target.checked
+          debugger
+          console.log('temp====>', temp)
+        }
+        if (key === e?.target?.id && e?.target?.id?.includes('read')) {
+          temp[`read-${key.split('all-')[1]}`] = e.target.checked
+          if (!e.target.checked) {
+            temp[`all-${key.split('read-')[1]}`] = false
+          }
+
+        }
+        if (key === e?.target?.id && e?.target?.id?.includes('update')) {
+          temp[`update-${key.split('all-')[1]}`] = e.target.checked
+
+        }
+        if (key === e?.target?.id && e?.target?.id?.includes('delete')) {
+          temp[`delete-${key.split('all-')[1]}`] = e.target.checked
+
+        }
+
+      }
+      let find = Object.keys(temp).some((k) => !k)
+      if (find) {
+        temp['all-configuration'] = false
+      }
+      else {
+        temp['all-configuration'] = true
+      }
+      temp['all-configuration'] = false
+      reset(temp);
+
+    }
+
+  }
 
   return (
     <Box>
@@ -558,8 +643,10 @@ export default function RoleDetails(props) {
                       <>
                         <CheckBox
                           checked={field.value}
-                          onChange={(e: any) =>
-                            field.onChange(e.target.checked)
+                          onChange={async (e: any) => {
+                            await field.onChange(e.target.checked);
+                            handleChange(e)
+                          }
                           }
                           id={`all-configuration`}
                           fieldRef={field.ref}
@@ -582,7 +669,11 @@ export default function RoleDetails(props) {
                     <>
                       <CheckBox
                         checked={field.value}
-                        onChange={(e: any) => field.onChange(e.target.checked)}
+                        onChange={(e: any) => {
+                          field.onChange(e.target.checked);
+                          handleChange(e)
+                        }
+                        }
                         id={`read`}
                         fieldRef={field.ref}
                         disabled
@@ -602,7 +693,11 @@ export default function RoleDetails(props) {
                     <>
                       <CheckBox
                         checked={field.value}
-                        onChange={(e: any) => field.onChange(e.target.checked)}
+                        onChange={async (e: any) => {
+                          await field.onChange(e.target.checked);
+                          handleChange(e)
+                        }
+                        }
                         id={`update-configuration`}
                         fieldRef={field.ref}
                       />
@@ -621,7 +716,11 @@ export default function RoleDetails(props) {
                     <>
                       <CheckBox
                         checked={field.value}
-                        onChange={(e: any) => field.onChange(e.target.checked)}
+                        onChange={(e: any) => {
+                          field.onChange(e.target.checked);
+                          handleChange(e)
+                        }
+                        }
                         id={`delete-configuration`}
                         fieldRef={field.ref}
                       />
@@ -648,8 +747,10 @@ export default function RoleDetails(props) {
                       <>
                         <CheckBox
                           checked={field.value}
-                          onChange={(e: any) =>
-                            field.onChange(e.target.checked)
+                          onChange={(e: any) => {
+                            field.onChange(e.target.checked);
+                            handleChange(e)
+                          }
                           }
                           id={`all-global`}
                           fieldRef={field.ref}
@@ -672,7 +773,11 @@ export default function RoleDetails(props) {
                     <>
                       <CheckBox
                         checked={field.value}
-                        onChange={(e: any) => field.onChange(e.target.checked)}
+                        onChange={(e: any) => {
+                          field.onChange(e.target.checked);
+                          handleChange(e)
+                        }
+                        }
                         id={`read-global`}
                         fieldRef={field.ref}
                       />
@@ -691,7 +796,11 @@ export default function RoleDetails(props) {
                     <>
                       <CheckBox
                         checked={field.value}
-                        onChange={(e: any) => field.onChange(e.target.checked)}
+                        onChange={(e: any) => {
+                          field.onChange(e.target.checked);
+                          handleChange(e)
+                        }
+                        }
                         id={`update-global`}
                         fieldRef={field.ref}
                       />
@@ -710,7 +819,11 @@ export default function RoleDetails(props) {
                     <>
                       <CheckBox
                         checked={field.value}
-                        onChange={(e: any) => field.onChange(e.target.checked)}
+                        onChange={(e: any) => {
+                          field.onChange(e.target.checked);
+                          handleChange(e)
+                        }
+                        }
                         id={`delete-`}
                         fieldRef={field.ref}
                       />
@@ -737,8 +850,10 @@ export default function RoleDetails(props) {
                       <>
                         <CheckBox
                           checked={field.value}
-                          onChange={(e: any) =>
-                            field.onChange(e.target.checked)
+                          onChange={(e: any) => {
+                            field.onChange(e.target.checked);
+                            handleChange(e)
+                          }
                           }
                           id={`all-connector`}
                           fieldRef={field.ref}
@@ -761,7 +876,11 @@ export default function RoleDetails(props) {
                     <>
                       <CheckBox
                         checked={field.value}
-                        onChange={(e: any) => field.onChange(e.target.checked)}
+                        onChange={(e: any) => {
+                          field.onChange(e.target.checked);
+                          handleChange(e)
+                        }
+                        }
                         id={`read-connector`}
                         fieldRef={field.ref}
                       />
@@ -780,7 +899,11 @@ export default function RoleDetails(props) {
                     <>
                       <CheckBox
                         checked={field.value}
-                        onChange={(e: any) => field.onChange(e.target.checked)}
+                        onChange={(e: any) => {
+                          field.onChange(e.target.checked);
+                          handleChange(e)
+                        }
+                        }
                         id={`update-connector`}
                         fieldRef={field.ref}
                       />
@@ -799,7 +922,11 @@ export default function RoleDetails(props) {
                     <>
                       <CheckBox
                         checked={field.value}
-                        onChange={(e: any) => field.onChange(e.target.checked)}
+                        onChange={(e: any) => {
+                          field.onChange(e.target.checked);
+                          handleChange(e)
+                        }
+                        }
                         id={`delete-connector`}
                         fieldRef={field.ref}
                       />
@@ -826,8 +953,10 @@ export default function RoleDetails(props) {
                       <>
                         <CheckBox
                           checked={field.value}
-                          onChange={(e: any) =>
-                            field.onChange(e.target.checked)
+                          onChange={(e: any) => {
+                            field.onChange(e.target.checked);
+                            handleChange(e)
+                          }
                           }
                           id={`all-auth-profile`}
                           fieldRef={field.ref}
@@ -850,7 +979,11 @@ export default function RoleDetails(props) {
                     <>
                       <CheckBox
                         checked={field.value}
-                        onChange={(e: any) => field.onChange(e.target.checked)}
+                        onChange={(e: any) => {
+                          field.onChange(e.target.checked);
+                          handleChange(e)
+                        }
+                        }
                         id={`read-auth-profile`}
                         fieldRef={field.ref}
                       />
@@ -869,7 +1002,11 @@ export default function RoleDetails(props) {
                     <>
                       <CheckBox
                         checked={field.value}
-                        onChange={(e: any) => field.onChange(e.target.checked)}
+                        onChange={(e: any) => {
+                          field.onChange(e.target.checked);
+                          handleChange(e)
+                        }
+                        }
                         id={`update-auth-profile`}
                         fieldRef={field.ref}
                       />
@@ -888,7 +1025,11 @@ export default function RoleDetails(props) {
                     <>
                       <CheckBox
                         checked={field.value}
-                        onChange={(e: any) => field.onChange(e.target.checked)}
+                        onChange={(e: any) => {
+                          field.onChange(e.target.checked);
+                          handleChange(e)
+                        }
+                        }
                         id={`delete-auth-profile`}
                         fieldRef={field.ref}
                       />
@@ -915,8 +1056,10 @@ export default function RoleDetails(props) {
                       <>
                         <CheckBox
                           checked={field.value}
-                          onChange={(e: any) =>
-                            field.onChange(e.target.checked)
+                          onChange={(e: any) => {
+                            field.onChange(e.target.checked);
+                            handleChange(e)
+                          }
                           }
                           id={`all-cert-profile`}
                           fieldRef={field.ref}
@@ -939,7 +1082,11 @@ export default function RoleDetails(props) {
                     <>
                       <CheckBox
                         checked={field.value}
-                        onChange={(e: any) => field.onChange(e.target.checked)}
+                        onChange={(e: any) => {
+                          field.onChange(e.target.checked);
+                          handleChange(e)
+                        }
+                        }
                         id={`read-cert-profile`}
                         fieldRef={field.ref}
                       />
@@ -958,7 +1105,11 @@ export default function RoleDetails(props) {
                     <>
                       <CheckBox
                         checked={field.value}
-                        onChange={(e: any) => field.onChange(e.target.checked)}
+                        onChange={(e: any) => {
+                          field.onChange(e.target.checked);
+                          handleChange(e)
+                        }
+                        }
                         id={`update-cert-profile`}
                         fieldRef={field.ref}
                       />
@@ -977,7 +1128,11 @@ export default function RoleDetails(props) {
                     <>
                       <CheckBox
                         checked={field.value}
-                        onChange={(e: any) => field.onChange(e.target.checked)}
+                        onChange={(e: any) => {
+                          field.onChange(e.target.checked);
+                          handleChange(e)
+                        }
+                        }
                         id={`delete-cert-profile`}
                         fieldRef={field.ref}
                       />
@@ -1004,8 +1159,10 @@ export default function RoleDetails(props) {
                       <>
                         <CheckBox
                           checked={field.value}
-                          onChange={(e: any) =>
-                            field.onChange(e.target.checked)
+                          onChange={(e: any) => {
+                            field.onChange(e.target.checked);
+                            handleChange(e)
+                          }
                           }
                           id={`all-sign-profile`}
                           fieldRef={field.ref}
@@ -1028,7 +1185,11 @@ export default function RoleDetails(props) {
                     <>
                       <CheckBox
                         checked={field.value}
-                        onChange={(e: any) => field.onChange(e.target.checked)}
+                        onChange={(e: any) => {
+                          field.onChange(e.target.checked);
+                          handleChange(e)
+                        }
+                        }
                         id={`read-sign-profile`}
                         fieldRef={field.ref}
                       />
@@ -1047,7 +1208,11 @@ export default function RoleDetails(props) {
                     <>
                       <CheckBox
                         checked={field.value}
-                        onChange={(e: any) => field.onChange(e.target.checked)}
+                        onChange={(e: any) => {
+                          field.onChange(e.target.checked);
+                          handleChange(e)
+                        }
+                        }
                         id={`update-sign-profile`}
                         fieldRef={field.ref}
                       />
@@ -1066,7 +1231,11 @@ export default function RoleDetails(props) {
                     <>
                       <CheckBox
                         checked={field.value}
-                        onChange={(e: any) => field.onChange(e.target.checked)}
+                        onChange={(e: any) => {
+                          field.onChange(e.target.checked);
+                          handleChange(e)
+                        }
+                        }
                         id={`delete-sign-profile`}
                         fieldRef={field.ref}
                       />
@@ -1093,8 +1262,10 @@ export default function RoleDetails(props) {
                       <>
                         <CheckBox
                           checked={field.value}
-                          onChange={(e: any) =>
-                            field.onChange(e.target.checked)
+                          onChange={(e: any) => {
+                            field.onChange(e.target.checked);
+                            handleChange(e)
+                          }
                           }
                           id={`all-veri-profile`}
                           fieldRef={field.ref}
@@ -1117,7 +1288,11 @@ export default function RoleDetails(props) {
                     <>
                       <CheckBox
                         checked={field.value}
-                        onChange={(e: any) => field.onChange(e.target.checked)}
+                        onChange={(e: any) => {
+                          field.onChange(e.target.checked);
+                          handleChange(e)
+                        }
+                        }
                         id={`read-veri-profile`}
                         fieldRef={field.ref}
                       />
@@ -1136,7 +1311,11 @@ export default function RoleDetails(props) {
                     <>
                       <CheckBox
                         checked={field.value}
-                        onChange={(e: any) => field.onChange(e.target.checked)}
+                        onChange={(e: any) => {
+                          field.onChange(e.target.checked);
+                          handleChange(e)
+                        }
+                        }
                         id={`update-veri-profile`}
                         fieldRef={field.ref}
                       />
@@ -1155,7 +1334,11 @@ export default function RoleDetails(props) {
                     <>
                       <CheckBox
                         checked={field.value}
-                        onChange={(e: any) => field.onChange(e.target.checked)}
+                        onChange={(e: any) => {
+                          field.onChange(e.target.checked);
+                          handleChange(e)
+                        }
+                        }
                         id={`delete-veri-profile`}
                         fieldRef={field.ref}
                       />
@@ -1182,8 +1365,10 @@ export default function RoleDetails(props) {
                       <>
                         <CheckBox
                           checked={field.value}
-                          onChange={(e: any) =>
-                            field.onChange(e.target.checked)
+                          onChange={(e: any) => {
+                            field.onChange(e.target.checked);
+                            handleChange(e)
+                          }
                           }
                           id={`all-virtual-id-profile`}
                           fieldRef={field.ref}
@@ -1206,7 +1391,11 @@ export default function RoleDetails(props) {
                     <>
                       <CheckBox
                         checked={field.value}
-                        onChange={(e: any) => field.onChange(e.target.checked)}
+                        onChange={(e: any) => {
+                          field.onChange(e.target.checked);
+                          handleChange(e)
+                        }
+                        }
                         id={`read-virtual-id-profile`}
                         fieldRef={field.ref}
                       />
@@ -1225,7 +1414,11 @@ export default function RoleDetails(props) {
                     <>
                       <CheckBox
                         checked={field.value}
-                        onChange={(e: any) => field.onChange(e.target.checked)}
+                        onChange={(e: any) => {
+                          field.onChange(e.target.checked);
+                          handleChange(e)
+                        }
+                        }
                         id={`update-virtual-id-profile`}
                         fieldRef={field.ref}
                       />
@@ -1244,7 +1437,11 @@ export default function RoleDetails(props) {
                     <>
                       <CheckBox
                         checked={field.value}
-                        onChange={(e: any) => field.onChange(e.target.checked)}
+                        onChange={(e: any) => {
+                          field.onChange(e.target.checked);
+                          handleChange(e)
+                        }
+                        }
                         id={`delete-virtual-id-profile`}
                         fieldRef={field.ref}
                       />
@@ -1271,8 +1468,10 @@ export default function RoleDetails(props) {
                       <>
                         <CheckBox
                           checked={field.value}
-                          onChange={(e: any) =>
-                            field.onChange(e.target.checked)
+                          onChange={(e: any) => {
+                            field.onChange(e.target.checked);
+                            handleChange(e)
+                          }
                           }
                           id={`all-process-evidence`}
                           fieldRef={field.ref}
@@ -1295,7 +1494,11 @@ export default function RoleDetails(props) {
                     <>
                       <CheckBox
                         checked={field.value}
-                        onChange={(e: any) => field.onChange(e.target.checked)}
+                        onChange={(e: any) => {
+                          field.onChange(e.target.checked);
+                          handleChange(e)
+                        }
+                        }
                         id={`read-process-evidence`}
                         fieldRef={field.ref}
                       />
@@ -1314,7 +1517,11 @@ export default function RoleDetails(props) {
                     <>
                       <CheckBox
                         checked={field.value}
-                        onChange={(e: any) => field.onChange(e.target.checked)}
+                        onChange={(e: any) => {
+                          field.onChange(e.target.checked);
+                          handleChange(e)
+                        }
+                        }
                         id={`update-process-evidence`}
                         fieldRef={field.ref}
                       />
@@ -1333,7 +1540,11 @@ export default function RoleDetails(props) {
                     <>
                       <CheckBox
                         checked={field.value}
-                        onChange={(e: any) => field.onChange(e.target.checked)}
+                        onChange={(e: any) => {
+                          field.onChange(e.target.checked);
+                          handleChange(e)
+                        }
+                        }
                         id={`delete-process-evidence`}
                         fieldRef={field.ref}
                       />
@@ -1360,8 +1571,10 @@ export default function RoleDetails(props) {
                       <>
                         <CheckBox
                           checked={field.value}
-                          onChange={(e: any) =>
-                            field.onChange(e.target.checked)
+                          onChange={(e: any) => {
+                            field.onChange(e.target.checked);
+                            handleChange(e)
+                          }
                           }
                           id={`all-billing-setting`}
                           fieldRef={field.ref}
@@ -1384,7 +1597,11 @@ export default function RoleDetails(props) {
                     <>
                       <CheckBox
                         checked={field.value}
-                        onChange={(e: any) => field.onChange(e.target.checked)}
+                        onChange={(e: any) => {
+                          field.onChange(e.target.checked);
+                          handleChange(e)
+                        }
+                        }
                         id={`read-billing-setting`}
                         fieldRef={field.ref}
                       />
@@ -1403,7 +1620,11 @@ export default function RoleDetails(props) {
                     <>
                       <CheckBox
                         checked={field.value}
-                        onChange={(e: any) => field.onChange(e.target.checked)}
+                        onChange={(e: any) => {
+                          field.onChange(e.target.checked);
+                          handleChange(e)
+                        }
+                        }
                         id={`update-billing-setting`}
                         fieldRef={field.ref}
                       />
@@ -1422,7 +1643,11 @@ export default function RoleDetails(props) {
                     <>
                       <CheckBox
                         checked={field.value}
-                        onChange={(e: any) => field.onChange(e.target.checked)}
+                        onChange={(e: any) => {
+                          field.onChange(e.target.checked);
+                          handleChange(e)
+                        }
+                        }
                         id={`delete-billing-setting`}
                         fieldRef={field.ref}
                       />
@@ -1449,8 +1674,10 @@ export default function RoleDetails(props) {
                       <>
                         <CheckBox
                           checked={field.value}
-                          onChange={(e: any) =>
-                            field.onChange(e.target.checked)
+                          onChange={(e: any) => {
+                            field.onChange(e.target.checked);
+                            handleChange(e)
+                          }
                           }
                           id={`all-branding`}
                           fieldRef={field.ref}
@@ -1473,7 +1700,11 @@ export default function RoleDetails(props) {
                     <>
                       <CheckBox
                         checked={field.value}
-                        onChange={(e: any) => field.onChange(e.target.checked)}
+                        onChange={(e: any) => {
+                          field.onChange(e.target.checked);
+                          handleChange(e)
+                        }
+                        }
                         id={`read-branding`}
                         fieldRef={field.ref}
                       />
@@ -1492,7 +1723,11 @@ export default function RoleDetails(props) {
                     <>
                       <CheckBox
                         checked={field.value}
-                        onChange={(e: any) => field.onChange(e.target.checked)}
+                        onChange={(e: any) => {
+                          field.onChange(e.target.checked);
+                          handleChange(e)
+                        }
+                        }
                         id={`update-branding`}
                         fieldRef={field.ref}
                       />
@@ -1511,7 +1746,11 @@ export default function RoleDetails(props) {
                     <>
                       <CheckBox
                         checked={field.value}
-                        onChange={(e: any) => field.onChange(e.target.checked)}
+                        onChange={(e: any) => {
+                          field.onChange(e.target.checked);
+                          handleChange(e)
+                        }
+                        }
                         id={`delete-branding`}
                         fieldRef={field.ref}
                       />
@@ -1538,8 +1777,10 @@ export default function RoleDetails(props) {
                       <>
                         <CheckBox
                           checked={field.value}
-                          onChange={(e: any) =>
-                            field.onChange(e.target.checked)
+                          onChange={(e: any) => {
+                            field.onChange(e.target.checked);
+                            handleChange(e)
+                          }
                           }
                           id={`all-license`}
                           fieldRef={field.ref}
@@ -1562,7 +1803,11 @@ export default function RoleDetails(props) {
                     <>
                       <CheckBox
                         checked={field.value}
-                        onChange={(e: any) => field.onChange(e.target.checked)}
+                        onChange={(e: any) => {
+                          field.onChange(e.target.checked);
+                          handleChange(e)
+                        }
+                        }
                         id={`read-license`}
                         fieldRef={field.ref}
                       />
@@ -1581,7 +1826,11 @@ export default function RoleDetails(props) {
                     <>
                       <CheckBox
                         checked={field.value}
-                        onChange={(e: any) => field.onChange(e.target.checked)}
+                        onChange={(e: any) => {
+                          field.onChange(e.target.checked);
+                          handleChange(e)
+                        }
+                        }
                         id={`update-license`}
                         fieldRef={field.ref}
                       />
@@ -1600,7 +1849,11 @@ export default function RoleDetails(props) {
                     <>
                       <CheckBox
                         checked={field.value}
-                        onChange={(e: any) => field.onChange(e.target.checked)}
+                        onChange={(e: any) => {
+                          field.onChange(e.target.checked);
+                          handleChange(e)
+                        }
+                        }
                         id={`delete-license`}
                         fieldRef={field.ref}
                       />
@@ -1627,8 +1880,10 @@ export default function RoleDetails(props) {
                       <>
                         <CheckBox
                           checked={field.value}
-                          onChange={(e: any) =>
-                            field.onChange(e.target.checked)
+                          onChange={(e: any) => {
+                            field.onChange(e.target.checked);
+                            handleChange(e)
+                          }
                           }
                           id={`all-data-directory`}
                           fieldRef={field.ref}
@@ -1651,7 +1906,11 @@ export default function RoleDetails(props) {
                     <>
                       <CheckBox
                         checked={field.value}
-                        onChange={(e: any) => field.onChange(e.target.checked)}
+                        onChange={(e: any) => {
+                          field.onChange(e.target.checked);
+                          handleChange(e)
+                        }
+                        }
                         id={`read-data-directory`}
                         fieldRef={field.ref}
                       />
@@ -1670,7 +1929,11 @@ export default function RoleDetails(props) {
                     <>
                       <CheckBox
                         checked={field.value}
-                        onChange={(e: any) => field.onChange(e.target.checked)}
+                        onChange={(e: any) => {
+                          field.onChange(e.target.checked);
+                          handleChange(e)
+                        }
+                        }
                         id={`update-data-directory`}
                         fieldRef={field.ref}
                       />
@@ -1689,7 +1952,11 @@ export default function RoleDetails(props) {
                     <>
                       <CheckBox
                         checked={field.value}
-                        onChange={(e: any) => field.onChange(e.target.checked)}
+                        onChange={(e: any) => {
+                          field.onChange(e.target.checked);
+                          handleChange(e)
+                        }
+                        }
                         id={`delete-data-directory`}
                         fieldRef={field.ref}
                       />
@@ -1716,8 +1983,10 @@ export default function RoleDetails(props) {
                       <>
                         <CheckBox
                           checked={field.value}
-                          onChange={(e: any) =>
-                            field.onChange(e.target.checked)
+                          onChange={(e: any) => {
+                            field.onChange(e.target.checked);
+                            handleChange(e)
+                          }
                           }
                           id={`all-con-instance`}
                           fieldRef={field.ref}
@@ -1740,7 +2009,11 @@ export default function RoleDetails(props) {
                     <>
                       <CheckBox
                         checked={field.value}
-                        onChange={(e: any) => field.onChange(e.target.checked)}
+                        onChange={(e: any) => {
+                          field.onChange(e.target.checked);
+                          handleChange(e)
+                        }
+                        }
                         id={`read-con-instance`}
                         fieldRef={field.ref}
                       />
@@ -1759,7 +2032,11 @@ export default function RoleDetails(props) {
                     <>
                       <CheckBox
                         checked={field.value}
-                        onChange={(e: any) => field.onChange(e.target.checked)}
+                        onChange={(e: any) => {
+                          field.onChange(e.target.checked);
+                          handleChange(e)
+                        }
+                        }
                         id={`update-con-instance`}
                         fieldRef={field.ref}
                       />
@@ -1778,7 +2055,11 @@ export default function RoleDetails(props) {
                     <>
                       <CheckBox
                         checked={field.value}
-                        onChange={(e: any) => field.onChange(e.target.checked)}
+                        onChange={(e: any) => {
+                          field.onChange(e.target.checked);
+                          handleChange(e)
+                        }
+                        }
                         id={`delete-con-instance`}
                         fieldRef={field.ref}
                       />
@@ -1805,8 +2086,10 @@ export default function RoleDetails(props) {
                       <>
                         <CheckBox
                           checked={field.value}
-                          onChange={(e: any) =>
-                            field.onChange(e.target.checked)
+                          onChange={(e: any) => {
+                            field.onChange(e.target.checked);
+                            handleChange(e)
+                          }
                           }
                           id={`all-con-instance`}
                           fieldRef={field.ref}
@@ -1829,7 +2112,11 @@ export default function RoleDetails(props) {
                     <>
                       <CheckBox
                         checked={field.value}
-                        onChange={(e: any) => field.onChange(e.target.checked)}
+                        onChange={(e: any) => {
+                          field.onChange(e.target.checked);
+                          handleChange(e)
+                        }
+                        }
                         id={`read-con-instance`}
                         fieldRef={field.ref}
                       />
@@ -1848,7 +2135,11 @@ export default function RoleDetails(props) {
                     <>
                       <CheckBox
                         checked={field.value}
-                        onChange={(e: any) => field.onChange(e.target.checked)}
+                        onChange={(e: any) => {
+                          field.onChange(e.target.checked);
+                          handleChange(e)
+                        }
+                        }
                         id={`update-con-instance`}
                         fieldRef={field.ref}
                       />
@@ -1867,7 +2158,11 @@ export default function RoleDetails(props) {
                     <>
                       <CheckBox
                         checked={field.value}
-                        onChange={(e: any) => field.onChange(e.target.checked)}
+                        onChange={(e: any) => {
+                          field.onChange(e.target.checked);
+                          handleChange(e)
+                        }
+                        }
                         id={`delete-con-instance`}
                         fieldRef={field.ref}
                       />
@@ -1894,8 +2189,10 @@ export default function RoleDetails(props) {
                       <>
                         <CheckBox
                           checked={field.value}
-                          onChange={(e: any) =>
-                            field.onChange(e.target.checked)
+                          onChange={(e: any) => {
+                            field.onChange(e.target.checked);
+                            handleChange(e)
+                          }
                           }
                           id={`all-con-terms`}
                           fieldRef={field.ref}
@@ -1920,7 +2217,11 @@ export default function RoleDetails(props) {
                     <>
                       <CheckBox
                         checked={field.value}
-                        onChange={(e: any) => field.onChange(e.target.checked)}
+                        onChange={(e: any) => {
+                          field.onChange(e.target.checked);
+                          handleChange(e)
+                        }
+                        }
                         id={`read-con-terms`}
                         fieldRef={field.ref}
                       />
@@ -1939,7 +2240,11 @@ export default function RoleDetails(props) {
                     <>
                       <CheckBox
                         checked={field.value}
-                        onChange={(e: any) => field.onChange(e.target.checked)}
+                        onChange={(e: any) => {
+                          field.onChange(e.target.checked);
+                          handleChange(e)
+                        }
+                        }
                         id={`update-con-terms`}
                         fieldRef={field.ref}
                       />
@@ -1958,7 +2263,11 @@ export default function RoleDetails(props) {
                     <>
                       <CheckBox
                         checked={field.value}
-                        onChange={(e: any) => field.onChange(e.target.checked)}
+                        onChange={(e: any) => {
+                          field.onChange(e.target.checked);
+                          handleChange(e)
+                        }
+                        }
                         id={`delete-con-terms`}
                         fieldRef={field.ref}
                       />
@@ -1985,8 +2294,10 @@ export default function RoleDetails(props) {
                       <>
                         <CheckBox
                           checked={field.value}
-                          onChange={(e: any) =>
-                            field.onChange(e.target.checked)
+                          onChange={(e: any) => {
+                            field.onChange(e.target.checked);
+                            handleChange(e)
+                          }
                           }
                           id={`all-signalr`}
                           fieldRef={field.ref}
@@ -2009,7 +2320,11 @@ export default function RoleDetails(props) {
                     <>
                       <CheckBox
                         checked={field.value}
-                        onChange={(e: any) => field.onChange(e.target.checked)}
+                        onChange={(e: any) => {
+                          field.onChange(e.target.checked);
+                          handleChange(e)
+                        }
+                        }
                         id={`read-signalr`}
                         fieldRef={field.ref}
                       />
@@ -2028,7 +2343,11 @@ export default function RoleDetails(props) {
                     <>
                       <CheckBox
                         checked={field.value}
-                        onChange={(e: any) => field.onChange(e.target.checked)}
+                        onChange={(e: any) => {
+                          field.onChange(e.target.checked);
+                          handleChange(e)
+                        }
+                        }
                         id={`update-signalr`}
                         fieldRef={field.ref}
                       />
@@ -2047,7 +2366,11 @@ export default function RoleDetails(props) {
                     <>
                       <CheckBox
                         checked={field.value}
-                        onChange={(e: any) => field.onChange(e.target.checked)}
+                        onChange={(e: any) => {
+                          field.onChange(e.target.checked);
+                          handleChange(e)
+                        }
+                        }
                         id={`delete-signalr`}
                         fieldRef={field.ref}
                       />
@@ -2074,8 +2397,10 @@ export default function RoleDetails(props) {
                       <>
                         <CheckBox
                           checked={field.value}
-                          onChange={(e: any) =>
-                            field.onChange(e.target.checked)
+                          onChange={(e: any) => {
+                            field.onChange(e.target.checked);
+                            handleChange(e)
+                          }
                           }
                           id={`all-service-plan`}
                           fieldRef={field.ref}
@@ -2098,7 +2423,11 @@ export default function RoleDetails(props) {
                     <>
                       <CheckBox
                         checked={field.value}
-                        onChange={(e: any) => field.onChange(e.target.checked)}
+                        onChange={(e: any) => {
+                          field.onChange(e.target.checked);
+                          handleChange(e)
+                        }
+                        }
                         id={`read`}
                         fieldRef={field.ref}
                         disabled
@@ -2118,7 +2447,11 @@ export default function RoleDetails(props) {
                     <>
                       <CheckBox
                         checked={field.value}
-                        onChange={(e: any) => field.onChange(e.target.checked)}
+                        onChange={(e: any) => {
+                          field.onChange(e.target.checked);
+                          handleChange(e)
+                        }
+                        }
                         id={`update-service-plan`}
                         fieldRef={field.ref}
                       />
@@ -2137,7 +2470,11 @@ export default function RoleDetails(props) {
                     <>
                       <CheckBox
                         checked={field.value}
-                        onChange={(e: any) => field.onChange(e.target.checked)}
+                        onChange={(e: any) => {
+                          field.onChange(e.target.checked);
+                          handleChange(e)
+                        }
+                        }
                         id={`delete-service-plan`}
                         fieldRef={field.ref}
                       />
@@ -2164,8 +2501,10 @@ export default function RoleDetails(props) {
                       <>
                         <CheckBox
                           checked={field.value}
-                          onChange={(e: any) =>
-                            field.onChange(e.target.checked)
+                          onChange={(e: any) => {
+                            field.onChange(e.target.checked);
+                            handleChange(e)
+                          }
                           }
                           id={`all-account`}
                           fieldRef={field.ref}
@@ -2188,7 +2527,11 @@ export default function RoleDetails(props) {
                     <>
                       <CheckBox
                         checked={field.value}
-                        onChange={(e: any) => field.onChange(e.target.checked)}
+                        onChange={(e: any) => {
+                          field.onChange(e.target.checked);
+                          handleChange(e)
+                        }
+                        }
                         id={`read`}
                         fieldRef={field.ref}
                         disabled
@@ -2208,7 +2551,11 @@ export default function RoleDetails(props) {
                     <>
                       <CheckBox
                         checked={field.value}
-                        onChange={(e: any) => field.onChange(e.target.checked)}
+                        onChange={(e: any) => {
+                          field.onChange(e.target.checked);
+                          handleChange(e)
+                        }
+                        }
                         id={`update-account`}
                         fieldRef={field.ref}
                       />
@@ -2227,7 +2574,11 @@ export default function RoleDetails(props) {
                     <>
                       <CheckBox
                         checked={field.value}
-                        onChange={(e: any) => field.onChange(e.target.checked)}
+                        onChange={(e: any) => {
+                          field.onChange(e.target.checked);
+                          handleChange(e)
+                        }
+                        }
                         id={`delete-account`}
                         fieldRef={field.ref}
                       />
@@ -2254,8 +2605,10 @@ export default function RoleDetails(props) {
                       <>
                         <CheckBox
                           checked={field.value}
-                          onChange={(e: any) =>
-                            field.onChange(e.target.checked)
+                          onChange={(e: any) => {
+                            field.onChange(e.target.checked);
+                            handleChange(e)
+                          }
                           }
                           id={`all-billing`}
                           fieldRef={field.ref}
@@ -2278,7 +2631,11 @@ export default function RoleDetails(props) {
                     <>
                       <CheckBox
                         checked={field.value}
-                        onChange={(e: any) => field.onChange(e.target.checked)}
+                        onChange={(e: any) => {
+                          field.onChange(e.target.checked);
+                          handleChange(e)
+                        }
+                        }
                         id={`read`}
                         fieldRef={field.ref}
                         disabled
@@ -2298,7 +2655,11 @@ export default function RoleDetails(props) {
                     <>
                       <CheckBox
                         checked={field.value}
-                        onChange={(e: any) => field.onChange(e.target.checked)}
+                        onChange={(e: any) => {
+                          field.onChange(e.target.checked);
+                          handleChange(e)
+                        }
+                        }
                         id={`update-billing`}
                         fieldRef={field.ref}
                       />
@@ -2317,7 +2678,11 @@ export default function RoleDetails(props) {
                     <>
                       <CheckBox
                         checked={field.value}
-                        onChange={(e: any) => field.onChange(e.target.checked)}
+                        onChange={(e: any) => {
+                          field.onChange(e.target.checked);
+                          handleChange(e)
+                        }
+                        }
                         id={`delete-billing`}
                         fieldRef={field.ref}
                       />
@@ -2344,8 +2709,10 @@ export default function RoleDetails(props) {
                       <>
                         <CheckBox
                           checked={field.value}
-                          onChange={(e: any) =>
-                            field.onChange(e.target.checked)
+                          onChange={(e: any) => {
+                            field.onChange(e.target.checked);
+                            handleChange(e)
+                          }
                           }
                           id={`all-access-control`}
                           fieldRef={field.ref}
@@ -2368,7 +2735,11 @@ export default function RoleDetails(props) {
                     <>
                       <CheckBox
                         checked={field.value}
-                        onChange={(e: any) => field.onChange(e.target.checked)}
+                        onChange={(e: any) => {
+                          field.onChange(e.target.checked);
+                          handleChange(e)
+                        }
+                        }
                         id={`read`}
                         fieldRef={field.ref}
                         disabled
@@ -2388,7 +2759,11 @@ export default function RoleDetails(props) {
                     <>
                       <CheckBox
                         checked={field.value}
-                        onChange={(e: any) => field.onChange(e.target.checked)}
+                        onChange={(e: any) => {
+                          field.onChange(e.target.checked);
+                          handleChange(e)
+                        }
+                        }
                         id={`update-access-control`}
                         fieldRef={field.ref}
                       />
@@ -2407,7 +2782,11 @@ export default function RoleDetails(props) {
                     <>
                       <CheckBox
                         checked={field.value}
-                        onChange={(e: any) => field.onChange(e.target.checked)}
+                        onChange={(e: any) => {
+                          field.onChange(e.target.checked);
+                          handleChange(e)
+                        }
+                        }
                         id={`delete-access-control`}
                         fieldRef={field.ref}
                       />
@@ -2434,8 +2813,10 @@ export default function RoleDetails(props) {
                       <>
                         <CheckBox
                           checked={field.value}
-                          onChange={(e: any) =>
-                            field.onChange(e.target.checked)
+                          onChange={(e: any) => {
+                            field.onChange(e.target.checked);
+                            handleChange(e)
+                          }
                           }
                           id={`all-admin-control`}
                           fieldRef={field.ref}
@@ -2458,7 +2839,11 @@ export default function RoleDetails(props) {
                     <>
                       <CheckBox
                         checked={field.value}
-                        onChange={(e: any) => field.onChange(e.target.checked)}
+                        onChange={(e: any) => {
+                          field.onChange(e.target.checked);
+                          handleChange(e)
+                        }
+                        }
                         id={`read`}
                         fieldRef={field.ref}
                         disabled
@@ -2478,7 +2863,11 @@ export default function RoleDetails(props) {
                     <>
                       <CheckBox
                         checked={field.value}
-                        onChange={(e: any) => field.onChange(e.target.checked)}
+                        onChange={(e: any) => {
+                          field.onChange(e.target.checked);
+                          handleChange(e)
+                        }
+                        }
                         id={`update-admin-control`}
                         fieldRef={field.ref}
                       />
@@ -2497,7 +2886,11 @@ export default function RoleDetails(props) {
                     <>
                       <CheckBox
                         checked={field.value}
-                        onChange={(e: any) => field.onChange(e.target.checked)}
+                        onChange={(e: any) => {
+                          field.onChange(e.target.checked);
+                          handleChange(e)
+                        }
+                        }
                         id={`delete-admin-control`}
                         fieldRef={field.ref}
                       />
@@ -2524,8 +2917,10 @@ export default function RoleDetails(props) {
                       <>
                         <CheckBox
                           checked={field.value}
-                          onChange={(e: any) =>
-                            field.onChange(e.target.checked)
+                          onChange={(e: any) => {
+                            field.onChange(e.target.checked);
+                            handleChange(e)
+                          }
                           }
                           id={`all-reports`}
                           fieldRef={field.ref}
@@ -2548,7 +2943,11 @@ export default function RoleDetails(props) {
                     <>
                       <CheckBox
                         checked={field.value}
-                        onChange={(e: any) => field.onChange(e.target.checked)}
+                        onChange={(e: any) => {
+                          field.onChange(e.target.checked);
+                          handleChange(e)
+                        }
+                        }
                         id={`read`}
                         fieldRef={field.ref}
                         disabled
@@ -2568,7 +2967,11 @@ export default function RoleDetails(props) {
                     <>
                       <CheckBox
                         checked={field.value}
-                        onChange={(e: any) => field.onChange(e.target.checked)}
+                        onChange={(e: any) => {
+                          field.onChange(e.target.checked);
+                          handleChange(e)
+                        }
+                        }
                         id={`update-reports`}
                         fieldRef={field.ref}
                       />
@@ -2587,7 +2990,11 @@ export default function RoleDetails(props) {
                     <>
                       <CheckBox
                         checked={field.value}
-                        onChange={(e: any) => field.onChange(e.target.checked)}
+                        onChange={(e: any) => {
+                          field.onChange(e.target.checked);
+                          handleChange(e)
+                        }
+                        }
                         id={`delete-reports`}
                         fieldRef={field.ref}
                       />
