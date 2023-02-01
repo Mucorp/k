@@ -511,7 +511,7 @@ export default function RoleDetails(props) {
     setParsedData(tempBoxes);
   };
   React.useEffect(() => {
-    console.log(parsedData);
+    // console.log(parsedData);
   }, [parsedData]);
 
   // React.useEffect(() => {
@@ -532,52 +532,105 @@ export default function RoleDetails(props) {
   const handleChange = (e) => {
 
     console.log('eeee===>', e)
-    console.log(`formState===>`, watch());
+    // console.log(`formState===>`, watch());
     const values = watch();
 
-    if (e?.target?.id === `all-configuration` && e.target.checked) {
-      const temp = {};
+    // if (e?.target?.id?.includes(`configuration`)) {
 
-      for (const key of configurtionChildrens) {
-        temp[key] = true;
-      }
 
-      reset(temp);
-    }
-    if (e?.target?.id === `all-configuration` && !e.target.checked) {
 
-      const temp = {};
 
-      for (const key of configurtionChildrens) {
-        temp[key] = false;
-      }
 
-      reset(temp);
-    }
+    //   if (e?.target?.id === `all-configuration`) {
+    //     const temp = {};
+
+    //     for (const key of configurtionChildrens) {
+    //       temp[key] = e.target.checked;
+    //     }
+
+    //     reset(temp);
+    //   }
+    //   if (e?.target?.id === `all-configuration` && e.target.checked) {
+    //     const temp = {};
+
+    //     for (const key of configurtionChildrens) {
+    //       temp[key] = true;
+    //     }
+
+    //     reset(temp);
+    //   }
+    //   if (e?.target?.id === `all-configuration` && !e.target.checked) {
+
+    //     const temp = {};
+
+    //     for (const key of configurtionChildrens) {
+    //       temp[key] = false;
+    //     }
+
+    //     reset(temp);
+    //   }
+    //   if (e?.target?.id === `all-configuration` && e.target.checked) {
+    //     const temp = {};
+
+    //     for (const key of configurtionChildrens) {
+    //       temp[key] = true;
+    //     }
+
+    //     reset(temp);
+    //   }
+    //   if (e?.target?.id === `all-configuration` && !e.target.checked) {
+
+    //     const temp = {};
+
+    //     for (const key of configurtionChildrens) {
+    //       temp[key] = false;
+    //     }
+
+    //     reset(temp);
+    //   }
+    //   if (e?.target?.id === `all-configuration` && e.target.checked) {
+    //     const temp = {};
+
+    //     for (const key of configurtionChildrens) {
+    //       temp[key] = true;
+    //     }
+
+    //     reset(temp);
+    //   }
+    //   if (e?.target?.id === `all-configuration` && !e.target.checked) {
+
+    //     const temp = {};
+
+    //     for (const key of configurtionChildrens) {
+    //       temp[key] = false;
+    //     }
+
+    //     reset(temp);
+    //   }
+    // }
     if (e?.target?.id !== `all-configuration` && !e?.target?.id.includes('configuration')) {
       // debugger
       let temp = cloneDeep(values)
       for (const key of configurtionChildrens) {
-        console.log('key===>', key.split('all-')[1])
+        // console.log('key===>', key.split('all-')[1])
         if (key === e?.target?.id && e?.target?.id?.includes('all')) {
           temp[`read-${key.split('all-')[1]}`] = e.target.checked
           temp[`delete-${key.split('all-')[1]}`] = e.target.checked
           temp[`update-${key.split('all-')[1]}`] = e.target.checked
           temp[key] = e.target.checked
-          debugger
-          console.log('temp====>', temp)
+          // debugger
+          // console.log('temp====>', temp)
         }
         if (key === e?.target?.id && e?.target?.id?.includes('read')) {
           temp[`read-${key.split('all-')[1]}`] = e.target.checked
           if (!e.target.checked) {
             temp[`all-${key.split('read-')[1]}`] = false
           }
-          if (e.target.checked && temp[`read-${key.split('all-')[1]}`] === true &&
-            temp[`delete-${key.split('all-')[1]}`] === true &&
-            temp[`update-${key.split('all-')[1]}`] === true &&
-            temp[key] === true) {
+          if (e.target.checked &&
+            temp[`delete-${key.replace('read-', '')}`] === true &&
+            temp[`update-${key.replace('read-', '')}`] === true) {
 
-            temp[`all-${key.split('read-')[1]}`] = e.target.checked
+            temp[`all-${key.replace('read-', '')}`] = true
 
           }
 
@@ -587,11 +640,10 @@ export default function RoleDetails(props) {
           if (!e.target.checked) {
             temp[`all-${key.split('update-')[1]}`] = false
           }
-          if (e.target.checked && temp[`read-${key.split('all-')[1]}`] === true &&
-            temp[`delete-${key.split('all-')[1]}`] === true &&
-            temp[`update-${key.split('all-')[1]}`] === true) {
+          if (e.target.checked && temp[`delete-${key.replace('update-', '')}`] === true &&
+            temp[`read-${key.replace('update-', '')}`] === true) {
 
-            temp[`all-${key.split('update-')[1]}`] = e.target.checked
+            temp[`all-${key.replace('update-', '')[1]}`] = e.target.checked
 
           }
 
@@ -601,11 +653,10 @@ export default function RoleDetails(props) {
           if (!e.target.checked) {
             temp[`all-${key.split('delete-')[1]}`] = false
           }
-          if (e.target.checked && temp[`read-${key.split('all-')[1]}`] === true &&
-            temp[`delete-${key.split('all-')[1]}`] === true &&
-            temp[`update-${key.split('all-')[1]}`] === true) {
+          if (e.target.checked && temp[`read-${key.replace('delete-', '')}`] === true &&
+            temp[`update-${key.replace('delete-', '')}`] === true) {
 
-            temp[`all-${key.split('delete-')[1]}`] = e.target.checked
+            temp[`all-${key.replace('delete-', '')}`] = e.target.checked
 
           }
 
@@ -620,6 +671,9 @@ export default function RoleDetails(props) {
       //   temp['all-configuration'] = true
       // }
       // temp['all-configuration'] = false
+
+
+      console.log('temping===>', temp)
       reset(temp);
 
     }
