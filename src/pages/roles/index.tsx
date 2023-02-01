@@ -541,15 +541,15 @@ export default function RoleDetails(props) {
 
 
 
-    //   if (e?.target?.id === `all-configuration`) {
-    //     const temp = {};
+    if (e?.target?.id === `all-configuration`) {
+      const temp = {};
 
-    //     for (const key of configurtionChildrens) {
-    //       temp[key] = e.target.checked;
-    //     }
+      for (const key of configurtionChildrens) {
+        temp[key] = e.target.checked;
+      }
 
-    //     reset(temp);
-    //   }
+      reset(temp);
+    }
     //   if (e?.target?.id === `all-configuration` && e.target.checked) {
     //     const temp = {};
 
