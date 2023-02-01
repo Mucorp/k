@@ -572,26 +572,54 @@ export default function RoleDetails(props) {
           if (!e.target.checked) {
             temp[`all-${key.split('read-')[1]}`] = false
           }
+          if (e.target.checked && temp[`read-${key.split('all-')[1]}`] === true &&
+            temp[`delete-${key.split('all-')[1]}`] === true &&
+            temp[`update-${key.split('all-')[1]}`] === true &&
+            temp[key] === true) {
+
+            temp[`all-${key.split('read-')[1]}`] = e.target.checked
+
+          }
 
         }
         if (key === e?.target?.id && e?.target?.id?.includes('update')) {
           temp[`update-${key.split('all-')[1]}`] = e.target.checked
+          if (!e.target.checked) {
+            temp[`all-${key.split('update-')[1]}`] = false
+          }
+          if (e.target.checked && temp[`read-${key.split('all-')[1]}`] === true &&
+            temp[`delete-${key.split('all-')[1]}`] === true &&
+            temp[`update-${key.split('all-')[1]}`] === true) {
+
+            temp[`all-${key.split('update-')[1]}`] = e.target.checked
+
+          }
 
         }
         if (key === e?.target?.id && e?.target?.id?.includes('delete')) {
           temp[`delete-${key.split('all-')[1]}`] = e.target.checked
+          if (!e.target.checked) {
+            temp[`all-${key.split('delete-')[1]}`] = false
+          }
+          if (e.target.checked && temp[`read-${key.split('all-')[1]}`] === true &&
+            temp[`delete-${key.split('all-')[1]}`] === true &&
+            temp[`update-${key.split('all-')[1]}`] === true) {
+
+            temp[`all-${key.split('delete-')[1]}`] = e.target.checked
+
+          }
 
         }
 
       }
-      let find = Object.keys(temp).some((k) => !k)
-      if (find) {
-        temp['all-configuration'] = false
-      }
-      else {
-        temp['all-configuration'] = true
-      }
-      temp['all-configuration'] = false
+      // let find = Object.keys(temp).some((k) => !k)
+      // if (find) {
+      //   temp['all-configuration'] = false
+      // }
+      // else {
+      //   temp['all-configuration'] = true
+      // }
+      // temp['all-configuration'] = false
       reset(temp);
 
     }
