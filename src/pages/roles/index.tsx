@@ -412,10 +412,7 @@ export default function RoleDetails(props) {
         };
         finalResult.push(attributeDetail);
       } else {
-        // if (administratorRoleDetail[i]?.attributeName === 'BILLING_SETTING') {
-        //   // console.log('rel?.children==>', rel?.children)
-        //   // debugger
-        // }
+
         if (
           rel?.children?.length &&
           rel.children.indexOf(administratorRoleDetail[i]?.attributeName) !== -1
@@ -487,7 +484,7 @@ export default function RoleDetails(props) {
             tempBoxChildren.isChecked = !dat?.isChecked;
 
             if (type === `read`) {
-              debugger;
+
               tempBoxChildren.read = !dat?.read;
             }
             if (type === `update`) {
@@ -618,7 +615,7 @@ export default function RoleDetails(props) {
 
     }
     if (e?.target?.id !== `all-configuration` && !e?.target?.id.includes('configuration') && configurtionChildrens.includes(e.target.id)) {
-      // debugger
+
       let temp = cloneDeep(values)
       for (const key of configurtionChildrens) {
         // console.log('key===>', key.split('all-')[1])
@@ -627,8 +624,7 @@ export default function RoleDetails(props) {
           temp[`delete-${key.split('all-')[1]}`] = e.target.checked
           temp[`update-${key.split('all-')[1]}`] = e.target.checked
           temp[key] = e.target.checked
-          // debugger
-          // console.log('temp====>', temp)
+
         }
         if (key === e?.target?.id && e?.target?.id?.includes('read')) {
           temp[`read-${key.split('all-')[1]}`] = e.target.checked
@@ -652,12 +648,12 @@ export default function RoleDetails(props) {
           if (e.target.checked && temp[`delete-${key.replace('update-', '')}`] === true &&
             temp[`read-${key.replace('update-', '')}`] === true) {
 
-            temp[`all-${key.replace('update-', '')[1]}`] = e.target.checked
+            temp[`all-${key.replace('update-', '')}`] = e.target.checked
 
           }
 
         }
-        if (key === e?.target?.id && e?.target?.id?.includes('delete')) {
+        if (key === e?.target?.id && e?.target?.id?.includes('delete-')) {
           temp[`delete-${key.split('all-')[1]}`] = e.target.checked
           if (!e.target.checked) {
             temp[`all-${key.split('delete-')[1]}`] = false
@@ -669,20 +665,34 @@ export default function RoleDetails(props) {
 
           }
 
+          // if (!e.target.checked) {
+          //   temp[`all-${key.split('update-')[1]}`] = false
+          // }
+          // if (e.target.checked && temp[`delete-${key.replace('update-', '')}`] === true &&
+          //   temp[`read-${key.replace('update-', '')}`] === true) {
+
+          //   temp[`all-${key.replace('update-', '')}`] = e.target.checked
+
+          // }
+
         }
 
       }
-      // let find = Object.keys(temp).some((k) => !k)
-      // if (find) {
-      //   temp['all-configuration'] = false
-      // }
-      // else {
-      //   temp['all-configuration'] = true
-      // }
+      let find = Object.keys(temp).some((k) => { return !temp[k] && k !== 'all-configuration' && configurtionChildrens.includes(k) })
+      console.log('finfifii==>', find)
+      if (find) {
+        temp['all-configuration'] = false
+      }
+      else {
+        temp['all-configuration'] = true
+      }
       // temp['all-configuration'] = false
 
 
       console.log('temping===>', temp)
+
+
+
       reset(temp);
 
     } else if (e?.target?.id !== `all-configuration` && !e?.target?.id.includes('configuration') && !configurtionChildrens.includes(e.target.id)) {
@@ -694,8 +704,7 @@ export default function RoleDetails(props) {
         temp[`update-${e?.target?.id.split('all-')[1]}`] = e.target.checked
         temp[e.target.id] = e.target.checked
         reset(temp)
-        // debugger
-        // console.log('temp====>', temp)
+
       }
       if (e?.target?.id && e?.target?.id?.includes('read')) {
         temp[`read-${e?.target?.id.split('all-')[1]}`] = e.target.checked
@@ -711,7 +720,7 @@ export default function RoleDetails(props) {
         }
         reset(temp)
       }
-      if (e?.target?.id && e?.target?.id?.includes('update')) {
+      if (e?.target?.id && e?.target?.id?.includes('update-')) {
         temp[`update-${e?.target?.id.replace('all-', '')}`] = e.target.checked
         if (!e.target.checked) {
           temp[`all-${e?.target?.id.replace('update-'), ''}`] = false
