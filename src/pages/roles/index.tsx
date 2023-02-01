@@ -723,7 +723,7 @@ export default function RoleDetails(props) {
       if (e?.target?.id && e?.target?.id?.includes('update-')) {
         temp[`update-${e?.target?.id.replace('all-', '')}`] = e.target.checked
         if (!e.target.checked) {
-          temp[`all-${e?.target?.id.replace('update-'), ''}`] = false
+          temp[`all-${e?.target?.id.replace('update-', '')}`] = false
         }
         if (e.target.checked && temp[`delete-${e?.target?.id.replace('update-', '')}`] === true &&
           temp[`read-${e?.target?.id.replace('update-', '')}`] === true) {
