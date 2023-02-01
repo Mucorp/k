@@ -535,80 +535,89 @@ export default function RoleDetails(props) {
     // console.log(`formState===>`, watch());
     const values = watch();
 
-    // if (e?.target?.id?.includes(`configuration`)) {
+    if (e?.target?.id?.includes(`configuration`)) {
 
 
 
 
 
-    if (e?.target?.id === `all-configuration`) {
-      const temp = {};
+      if (e?.target?.id === `all-configuration`) {
+        const temp = {};
 
-      for (const key of configurtionChildrens) {
-        temp[key] = e.target.checked;
+        for (const key of configurtionChildrens) {
+          temp[key] = e.target.checked;
+        }
+
+        reset(temp);
+      }
+      if (e?.target?.id === `read-configuration`) {
+        const temp = cloneDeep(values);
+
+        for (const key of configurtionChildrens) {
+          if (key.includes('read-')) {
+            temp[key] = e.target.checked
+          }
+          if (e.target.checked && temp[`update-${key.replace('read-', '')}`] === true &&
+            temp[`delete-${key.replace('read-', '')}`] === true) {
+            temp[`all-${key.replace('read-', '')}`] = e.target.checked
+          }
+          else {
+            temp[`all-${key.replace('read-', '')}`] = false
+          }
+        }
+
+        reset(temp);
+      }
+      if (e?.target?.id === `update-configuration`) {
+
+        const temp = cloneDeep(values);
+
+        for (const key of configurtionChildrens) {
+          if (key.includes('update-')) {
+            temp[key] = e.target.checked
+          }
+          if (e.target.checked && temp[`read-${key.replace('update-', '')}`] === true &&
+            temp[`delete-${key.replace('update-', '')}`] === true) {
+            temp[`all-${key.replace('update-', '')}`] = e.target.checked
+          }
+          else {
+            temp[`all-${key.replace('update-', '')}`] = false
+          }
+        }
+
+        reset(temp);
+      }
+      if (e?.target?.id === `delete-configuration`) {
+        const temp = cloneDeep(values);
+
+        for (const key of configurtionChildrens) {
+          if (key.includes('delete-')) {
+            temp[key] = e.target.checked
+          }
+          if (e.target.checked && temp[`read-${key.replace('delete-', '')}`] === true &&
+            temp[`update-${key.replace('delete-', '')}`] === true) {
+            temp[`all-${key.replace('delete-', '')}`] = e.target.checked
+          }
+          else {
+            temp[`all-${key.replace('delete-', '')}`] = false
+          }
+        }
+
+        reset(temp);
       }
 
-      reset(temp);
+      if (e?.target?.id === `all-configuration` && e.target.checked) {
+        const temp = cloneDeep(values);
+
+        for (const key of configurtionChildrens) {
+          temp[key] = true;
+        }
+
+        reset(temp);
+      }
+
     }
-    //   if (e?.target?.id === `all-configuration` && e.target.checked) {
-    //     const temp = {};
-
-    //     for (const key of configurtionChildrens) {
-    //       temp[key] = true;
-    //     }
-
-    //     reset(temp);
-    //   }
-    //   if (e?.target?.id === `all-configuration` && !e.target.checked) {
-
-    //     const temp = {};
-
-    //     for (const key of configurtionChildrens) {
-    //       temp[key] = false;
-    //     }
-
-    //     reset(temp);
-    //   }
-    //   if (e?.target?.id === `all-configuration` && e.target.checked) {
-    //     const temp = {};
-
-    //     for (const key of configurtionChildrens) {
-    //       temp[key] = true;
-    //     }
-
-    //     reset(temp);
-    //   }
-    //   if (e?.target?.id === `all-configuration` && !e.target.checked) {
-
-    //     const temp = {};
-
-    //     for (const key of configurtionChildrens) {
-    //       temp[key] = false;
-    //     }
-
-    //     reset(temp);
-    //   }
-    //   if (e?.target?.id === `all-configuration` && e.target.checked) {
-    //     const temp = {};
-
-    //     for (const key of configurtionChildrens) {
-    //       temp[key] = true;
-    //     }
-
-    //     reset(temp);
-    //   }
-    //   if (e?.target?.id === `all-configuration` && !e.target.checked) {
-
-    //     const temp = {};
-
-    //     for (const key of configurtionChildrens) {
-    //       temp[key] = false;
-    //     }
-
-    //     reset(temp);
-    //   }
-    // }
-    if (e?.target?.id !== `all-configuration` && !e?.target?.id.includes('configuration')) {
+    if (e?.target?.id !== `all-configuration` && !e?.target?.id.includes('configuration') && configurtionChildrens.includes(e.target.id)) {
       // debugger
       let temp = cloneDeep(values)
       for (const key of configurtionChildrens) {
@@ -676,6 +685,60 @@ export default function RoleDetails(props) {
       console.log('temping===>', temp)
       reset(temp);
 
+    } else if (e?.target?.id !== `all-configuration` && !e?.target?.id.includes('configuration') && !configurtionChildrens.includes(e.target.id)) {
+      let temp = cloneDeep(values)
+
+      if (e?.target?.id?.includes('all-')) {
+        temp[`read-${e?.target?.id.split('all-')[1]}`] = e.target.checked
+        temp[`delete-${e?.target?.id.split('all-')[1]}`] = e.target.checked
+        temp[`update-${e?.target?.id.split('all-')[1]}`] = e.target.checked
+        temp[e.target.id] = e.target.checked
+        reset(temp)
+        // debugger
+        // console.log('temp====>', temp)
+      }
+      if (e?.target?.id && e?.target?.id?.includes('read')) {
+        temp[`read-${e?.target?.id.split('all-')[1]}`] = e.target.checked
+        if (!e.target.checked) {
+          temp[`all-${e?.target?.id.split('read-')[1]}`] = false
+        }
+        if (e.target.checked &&
+          temp[`delete-${e?.target?.id.replace('read-', '')}`] === true &&
+          temp[`update-${e?.target?.id.replace('read-', '')}`] === true) {
+
+          temp[`all-${e?.target?.id.replace('read-', '')}`] = true
+
+        }
+        reset(temp)
+      }
+      if (e?.target?.id && e?.target?.id?.includes('update')) {
+        temp[`update-${e?.target?.id.replace('all-', '')}`] = e.target.checked
+        if (!e.target.checked) {
+          temp[`all-${e?.target?.id.replace('update-'), ''}`] = false
+        }
+        if (e.target.checked && temp[`delete-${e?.target?.id.replace('update-', '')}`] === true &&
+          temp[`read-${e?.target?.id.replace('update-', '')}`] === true) {
+
+          temp[`all-${e?.target?.id.replace('update-', '')}`] = true
+
+        }
+        reset(temp)
+
+      }
+      if (e?.target?.id && e?.target?.id?.includes('delete')) {
+        temp[`delete-${e?.target?.id.split('all-')[1]}`] = e.target.checked
+        if (!e.target.checked) {
+          temp[`all-${e?.target?.id.split('delete-')[1]}`] = false
+        }
+        if (e.target.checked && temp[`read-${e?.target?.id.replace('delete-', '')}`] === true &&
+          temp[`update-${e?.target?.id.replace('delete-', '')}`] === true) {
+
+          temp[`all-${e?.target?.id.replace('delete-', '')}`] = e.target.checked
+
+        }
+        reset(temp)
+
+      }
     }
 
   }
@@ -756,9 +819,9 @@ export default function RoleDetails(props) {
                           handleChange(e)
                         }
                         }
-                        id={`read`}
+                        id={`read-configuration`}
                         fieldRef={field.ref}
-                        disabled
+                      // disabled
                       />
                     </>
                   );
